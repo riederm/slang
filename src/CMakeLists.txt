@@ -15,13 +15,15 @@ find_package(ANTLR REQUIRED)
 
 
 antlr_target(Slang Slang.g4
-             PACKAGE antlrcpptest
-             OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+             PACKAGE slang_parser
+             OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/parser
              )
 
 # include generated files in project environment
 include_directories(${ANTLR_SampleGrammarLexer_OUTPUT_DIR})
 include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
+
+message("antlr outputs: " ${ANTLR_Slang_CXX_OUTPUTS})
 
 # add generated grammar to demo binary target
 add_executable(main

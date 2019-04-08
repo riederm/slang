@@ -7,13 +7,14 @@
 #include "antlr4-runtime.h"
 
 
-namespace antlrcpptest {
+namespace slang_parser {
 
 
 class  SlangLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, WS = 3, CHAR = 4, DIGIT = 5, IDENTIFIER = 6
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
+    WS = 8, CHAR = 9, DIGIT = 10, IDENTIFIER_NONDIGIT = 11, IDENTIFIER = 12
   };
 
   SlangLexer(antlr4::CharStream *input);
@@ -55,4 +56,4 @@ private:
   static Initializer _init;
 };
 
-}  // namespace antlrcpptest
+}  // namespace slang_parser
