@@ -32,3 +32,14 @@ add_executable(main
 )
 
 target_link_libraries(main antlr4_static)
+
+include(GTest)
+
+
+file(GLOB allSourceFiles
+    "*.h"
+    "*.cpp"
+)
+
+ADD_EXECUTABLE(runUnitTests
+                  ${allSourceFiles})

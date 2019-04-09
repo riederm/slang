@@ -3,15 +3,21 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/home/mathias/projects/slang-llvm/.build/src/antlr4_runtime/src/antlr4_runtime"
+                "${workspaceRoot}",
+                "~/projects/slang-llvm/.build/src/antlr4_runtime/src/antlr4_runtime/runtime/Cpp/runtime/src"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64",
-            "configurationProvider": "vector-of-bool.cmake-tools"
+            "configurationProvider": "vector-of-bool.cmake-tools",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "browse": {
+                "path":[
+                    "${workspaceRoot}",
+                    "~/projects/slang-llvm/.build/src/antlr4_runtime/src/antlr4_runtime/runtime/Cpp/runtime/src"],
+                "limitSymbolsToIncludedHeaders": true
+            }
         }
     ],
     "version": 4
