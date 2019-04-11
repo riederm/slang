@@ -14,7 +14,7 @@ class  SlangLexer : public antlr4::Lexer {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    WS = 8, CHAR = 9, DIGIT = 10, IDENTIFIER_NONDIGIT = 11, IDENTIFIER = 12
+    WS = 8, IDENTIFIER = 9
   };
 
   SlangLexer(antlr4::CharStream *input);

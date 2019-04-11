@@ -5,6 +5,8 @@
 #include "parser/SlangLexer.h"
 #include "antlr4-runtime.h"
 
+#include <stdio.h>
+
 using namespace slang_parser;
 using namespace antlr4;
 using namespace std;
@@ -13,6 +15,13 @@ using namespace std;
 class StringParser
 {
 private:
+
+    SlangParser* parser = NULL;
+    ANTLRInputStream* stream = NULL;
+    SlangLexer* lexer = NULL;
+    CommonTokenStream* tokenStream = NULL;
+
+    void cleanUp();
     /* data */
 public:
     StringParser();
@@ -22,12 +31,39 @@ public:
 };
 
 SlangParser::PouContext* StringParser::parse(string src){
-    ANTLRInputStream stream(src);
-    SlangLexer lexer(&stream);
-    CommonTokenStream tokenStream(&lexer);
-    SlangParser parser(&tokenStream);
+    
+    cleanUp();
 
-    return parser.pou();
+    stream = new ANTLRInputStream(src);
+    lexer = new SlangLexer(stream);
+    tokenStream = new CommonTokenStream(lexer);   
+    parser = new SlangParser(tokenStream);
+    
+    auto pou = parser->pou();
+    return pou;
+}
+
+void StringParser::cleanUp(){
+    if (tokenStream != NULL) {
+        delete tokenStream;
+        tokenStream = NULL;
+    }
+
+    if (lexer != NULL) {
+        delete lexer;
+        lexer = NULL;
+    }
+
+    if (stream != NULL) {
+        delete stream;
+        stream = NULL;
+    }
+
+    if (parser != NULL){
+        delete parser;
+        parser = NULL;
+    }
+        
 }
 
 StringParser::StringParser(/* args */)
@@ -37,4 +73,5 @@ StringParser::StringParser(/* args */)
 
 StringParser::~StringParser()
 {
+    cleanUp();
 }

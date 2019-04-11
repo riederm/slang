@@ -2,7 +2,7 @@ grammar Slang;
 
 
 
-pou : 'PROGRAM' pouName=IDENTIFIER declarations 'END_PROGRAM';
+pou : 'PROGRAM' pouName=IDENTIFIER declarations* 'END_PROGRAM';
 
 declarations :
    'VAR'
@@ -21,10 +21,10 @@ typeRef :
 WS
    : [ \t\r\n] -> skip;
 
-CHAR : ('a'..'z' | 'A'..'Z');
+IDENTIFIER : CHAR (CHAR | DIGIT | '_')*;
 
-DIGIT : ('0'..'9');
+fragment CHAR : ('a'..'z' | 'A'..'Z');
 
-IDENTIFIER_NONDIGIT : [a-zA-Z_];
+fragment DIGIT : ('0'..'9');
 
-IDENTIFIER : IDENTIFIER_NONDIGIT (IDENTIFIER_NONDIGIT | DIGIT | '_')*;
+

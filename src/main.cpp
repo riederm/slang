@@ -14,13 +14,13 @@ int main(int argc, char const *argv[])
 {
     string program =    "PROGRAM myProgram "
                         "   VAR "
-                        "       xx : INT;"
+                        "       x : INT;"
                         "   END_VAR "
                         "END_PROGRAM";
 
-
+    cout << "parsing ... " << endl;
     StringParser p;
-    SlangParser::PouContext* pou = p.parse(program);
+    auto pou = p.parse(program);
 
 
     /*unique_ptr<SlangParser> parser(
@@ -29,11 +29,13 @@ int main(int argc, char const *argv[])
                 new SlangLexer(
                     new ANTLRInputStream(program)))));
 */
-    cout << "parsing ... " << endl;
+
     //SlangParser::PouContext* pou = parser->pou();
     cout << "parsed successfully" << endl;
-    cout << "pou name: " << pou->IDENTIFIER()->getSymbol()->getText() << endl;
-    cout << "number of variables: " << pou->declarations()->variableDeclaration().size() << endl;
-    cout << "variable name: " << pou->declarations()->variableDeclaration(0)->IDENTIFIER()->getSymbol()->getText() << endl;
+    printf("%p \n", pou);
+    
+    cout << pou->IDENTIFIER()->getSymbol()->getText() << endl;
+    cout << "number of variables: " << pou->declarations(0)->variableDeclaration().size() << endl;
+    cout << "variable name: " << pou->declarations(0)->variableDeclaration(0)->IDENTIFIER()->getSymbol()->getText() << endl;
     return 0;
 }

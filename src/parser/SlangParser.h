@@ -14,7 +14,7 @@ class  SlangParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    WS = 8, CHAR = 9, DIGIT = 10, IDENTIFIER_NONDIGIT = 11, IDENTIFIER = 12
+    WS = 8, IDENTIFIER = 9
   };
 
   enum {
@@ -43,8 +43,9 @@ public:
     antlr4::Token *pouName = nullptr;;
     PouContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    DeclarationsContext *declarations();
     antlr4::tree::TerminalNode *IDENTIFIER();
+    std::vector<DeclarationsContext *> declarations();
+    DeclarationsContext* declarations(size_t i);
 
    
   };
