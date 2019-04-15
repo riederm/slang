@@ -2,7 +2,7 @@ grammar Slang;
 
 
 
-pou : 'PROGRAM' pouName=IDENTIFIER declarations* 'END_PROGRAM';
+pou : 'PROGRAM' pouName=IDENTIFIER declarationContainers+=declarations* 'END_PROGRAM';
 
 declarations :
    'VAR'

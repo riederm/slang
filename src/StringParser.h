@@ -1,11 +1,12 @@
-#pragma once
-
 #include <cstring>
 #include "parser/SlangParser.h"
 #include "parser/SlangLexer.h"
 #include "antlr4-runtime.h"
+#include "ast/pou.h"
 
 #include <stdio.h>
+
+#pragma once
 
 using namespace slang_parser;
 using namespace antlr4;
@@ -27,51 +28,7 @@ public:
     StringParser();
     ~StringParser();
 
-    SlangParser::PouContext* parse(string src);
+    static unique_ptr<Pou> parse_from_string(const string& src);
+
+    unique_ptr<Pou> parse(const string& src);
 };
-
-SlangParser::PouContext* StringParser::parse(string src){
-    
-    cleanUp();
-
-    stream = new ANTLRInputStream(src);
-    lexer = new SlangLexer(stream);
-    tokenStream = new CommonTokenStream(lexer);   
-    parser = new SlangParser(tokenStream);
-    
-    auto pou = parser->pou();
-    return pou;
-}
-
-void StringParser::cleanUp(){
-    if (tokenStream != NULL) {
-        delete tokenStream;
-        tokenStream = NULL;
-    }
-
-    if (lexer != NULL) {
-        delete lexer;
-        lexer = NULL;
-    }
-
-    if (stream != NULL) {
-        delete stream;
-        stream = NULL;
-    }
-
-    if (parser != NULL){
-        delete parser;
-        parser = NULL;
-    }
-        
-}
-
-StringParser::StringParser(/* args */)
-{
-
-}
-
-StringParser::~StringParser()
-{
-    cleanUp();
-}

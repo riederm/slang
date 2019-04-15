@@ -5,6 +5,7 @@
 #include "parser/SlangLexer.h"
 #include "antlr4-runtime.h"
 #include "StringParser.h"
+#include "ast/pou.h"
 
 using namespace slang_parser;
 using namespace antlr4;
@@ -32,10 +33,9 @@ int main(int argc, char const *argv[])
 
     //SlangParser::PouContext* pou = parser->pou();
     cout << "parsed successfully" << endl;
-    printf("%p \n", pou);
     
-    cout << pou->IDENTIFIER()->getSymbol()->getText() << endl;
-    cout << "number of variables: " << pou->declarations(0)->variableDeclaration().size() << endl;
-    cout << "variable name: " << pou->declarations(0)->variableDeclaration(0)->IDENTIFIER()->getSymbol()->getText() << endl;
+    // cout << pou->IDENTIFIER()->getSymbol()->getText() << endl;
+    // cout << "number of variables: " << pou->declarations(0)->variableDeclaration().size() << endl;
+    // cout << "variable name: " << pou->declarations(0)->variableDeclaration(0)->IDENTIFIER()->getSymbol()->getText() << endl;
     return 0;
 }

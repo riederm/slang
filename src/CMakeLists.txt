@@ -17,6 +17,7 @@ find_package(ANTLR REQUIRED)
 antlr_target(Slang Slang.g4
              PACKAGE slang_parser
              OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/parser
+             VISITOR
              )
 
 # include generated files in project environment
@@ -24,16 +25,6 @@ include_directories(${ANTLR_SampleGrammarLexer_OUTPUT_DIR})
 include_directories(${ANTLR_SampleGrammarParser_OUTPUT_DIR})
 
 message("antlr outputs: " ${ANTLR_Slang_CXX_OUTPUTS})
-
-# add generated grammar to demo binary target
-add_executable(main
-  main.cpp
-  ${ANTLR_Slang_CXX_OUTPUTS}
-)
-
-target_link_libraries(main antlr4_static)
-
-#include(GTest)
 
 
 message("G-TEST CMAKE")
@@ -72,12 +63,35 @@ endif()
 
 enable_testing()
 
-
 add_test( NAME runUnitTests COMMAND runUnitTests)
 
+file(GLOB AST_SRC
+    "ast/*.h"
+    "ast/*.cpp"
+)
+
+set(ALL_SRC 
+  SlangAstBuilder.cpp 
+  StringParser.cpp
+  ${ANTLR_Slang_CXX_OUTPUTS}
+  ${AST_SRC}
+  )
+
+#unit tests executable
 ADD_EXECUTABLE(runUnitTests
   test/ParserTest.cpp
-  ${ANTLR_Slang_CXX_OUTPUTS}
+  test/PouParserTests.cpp
+  ${ALL_SRC}
   )
 
 target_link_libraries(runUnitTests antlr4_static gtest_main)
+
+# main executable
+add_executable(main
+  main.cpp 
+  ${ALL_SRC}
+)
+
+target_link_libraries(main antlr4_static)
+
+#include(GTest)

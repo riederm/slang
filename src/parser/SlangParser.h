@@ -41,12 +41,16 @@ public:
   class  PouContext : public antlr4::ParserRuleContext {
   public:
     antlr4::Token *pouName = nullptr;;
+    SlangParser::DeclarationsContext *declarationsContext = nullptr;;
+    std::vector<DeclarationsContext *> declarationContainers;;
     PouContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *IDENTIFIER();
     std::vector<DeclarationsContext *> declarations();
     DeclarationsContext* declarations(size_t i);
 
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
@@ -59,6 +63,8 @@ public:
     std::vector<VariableDeclarationContext *> variableDeclaration();
     VariableDeclarationContext* variableDeclaration(size_t i);
 
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
@@ -72,6 +78,8 @@ public:
     TypeRefContext *typeRef();
     VariableDefinitionContext *variableDefinition();
 
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
@@ -83,6 +91,8 @@ public:
     virtual size_t getRuleIndex() const override;
     VariableDefinitionContext *variableDefinition();
 
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
@@ -94,6 +104,8 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *IDENTIFIER();
 
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 

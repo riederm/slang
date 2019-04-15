@@ -2,6 +2,7 @@
 // Generated from Slang.g4 by ANTLR 4.7.2
 
 
+#include "SlangVisitor.h"
 
 #include "SlangParser.h"
 
@@ -55,6 +56,13 @@ size_t SlangParser::PouContext::getRuleIndex() const {
 }
 
 
+antlrcpp::Any SlangParser::PouContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<SlangVisitor*>(visitor))
+    return parserVisitor->visitPou(this);
+  else
+    return visitor->visitChildren(this);
+}
+
 SlangParser::PouContext* SlangParser::pou() {
   PouContext *_localctx = _tracker.createInstance<PouContext>(_ctx, getState());
   enterRule(_localctx, 0, SlangParser::RulePou);
@@ -74,7 +82,8 @@ SlangParser::PouContext* SlangParser::pou() {
     _la = _input->LA(1);
     while (_la == SlangParser::T__2) {
       setState(12);
-      declarations();
+      dynamic_cast<PouContext *>(_localctx)->declarationsContext = declarations();
+      dynamic_cast<PouContext *>(_localctx)->declarationContainers.push_back(dynamic_cast<PouContext *>(_localctx)->declarationsContext);
       setState(17);
       _errHandler->sync(this);
       _la = _input->LA(1);
@@ -111,6 +120,13 @@ size_t SlangParser::DeclarationsContext::getRuleIndex() const {
   return SlangParser::RuleDeclarations;
 }
 
+
+antlrcpp::Any SlangParser::DeclarationsContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<SlangVisitor*>(visitor))
+    return parserVisitor->visitDeclarations(this);
+  else
+    return visitor->visitChildren(this);
+}
 
 SlangParser::DeclarationsContext* SlangParser::declarations() {
   DeclarationsContext *_localctx = _tracker.createInstance<DeclarationsContext>(_ctx, getState());
@@ -171,6 +187,13 @@ size_t SlangParser::VariableDeclarationContext::getRuleIndex() const {
 }
 
 
+antlrcpp::Any SlangParser::VariableDeclarationContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<SlangVisitor*>(visitor))
+    return parserVisitor->visitVariableDeclaration(this);
+  else
+    return visitor->visitChildren(this);
+}
+
 SlangParser::VariableDeclarationContext* SlangParser::variableDeclaration() {
   VariableDeclarationContext *_localctx = _tracker.createInstance<VariableDeclarationContext>(_ctx, getState());
   enterRule(_localctx, 4, SlangParser::RuleVariableDeclaration);
@@ -224,6 +247,13 @@ size_t SlangParser::VariableDefinitionContext::getRuleIndex() const {
 }
 
 
+antlrcpp::Any SlangParser::VariableDefinitionContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<SlangVisitor*>(visitor))
+    return parserVisitor->visitVariableDefinition(this);
+  else
+    return visitor->visitChildren(this);
+}
+
 SlangParser::VariableDefinitionContext* SlangParser::variableDefinition() {
   VariableDefinitionContext *_localctx = _tracker.createInstance<VariableDefinitionContext>(_ctx, getState());
   enterRule(_localctx, 6, SlangParser::RuleVariableDefinition);
@@ -263,6 +293,13 @@ size_t SlangParser::TypeRefContext::getRuleIndex() const {
   return SlangParser::RuleTypeRef;
 }
 
+
+antlrcpp::Any SlangParser::TypeRefContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<SlangVisitor*>(visitor))
+    return parserVisitor->visitTypeRef(this);
+  else
+    return visitor->visitChildren(this);
+}
 
 SlangParser::TypeRefContext* SlangParser::typeRef() {
   TypeRefContext *_localctx = _tracker.createInstance<TypeRefContext>(_ctx, getState());
