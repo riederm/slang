@@ -2,6 +2,7 @@
 #include "StringParser.h"
 #include "SlangAstBuilder.h"
 #include "ast/pou.h"
+#include "SyntaxError.h"
 
 unique_ptr<Pou> StringParser::parse_from_string(const string& src){
     StringParser parser;
@@ -17,10 +18,12 @@ unique_ptr<Pou> StringParser::parse(const string& src){
     tokenStream = new CommonTokenStream(lexer);   
     parser = new SlangParser(tokenStream);
     
-    auto pouContext = parser->pou();
+    auto errorListener = unique_ptr<VectorErrorListener>(new VectorErrorListener());
+    parser->addErrorListener(errorListener.get());
     SlangAstBuilder astBuilder;
-    auto pou = astBuilder.transform(pouContext);
-    return pou;
+    
+    Pou* pou = astBuilder.visit(parser->pou()).as<Pou*>();
+    return std::unique_ptr<Pou>(pou);
 }
 
 void StringParser::cleanUp(){

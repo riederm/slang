@@ -3,11 +3,12 @@
 
 #include "ast/pou.h"
 #include "parser/SlangParser.h"
+#include "parser/SlangBaseVisitor.h"
 
 using namespace std;
 using namespace slang_parser;
 
-class SlangAstBuilder
+class SlangAstBuilder : public SlangBaseVisitor
 {
 private:
     /* data */
@@ -15,6 +16,9 @@ public:
     SlangAstBuilder(/* args */);
     ~SlangAstBuilder();
 
-    unique_ptr<Pou> transform(SlangParser::PouContext* pouContext);
+    virtual antlrcpp::Any visitProgram(SlangParser::ProgramContext *ctx) override;
     
+    virtual antlrcpp::Any visitVarDeclarations(SlangParser::VarDeclarationsContext *ctx) override;
+
+    virtual antlrcpp::Any visitVariableDeclaration(SlangParser::VariableDeclarationContext *ctx) override;
 };

@@ -17,55 +17,54 @@ class VariableDeclaration;
 
 
 
-class DeclarationBlock : VariableDeclarationAcceptor{
-    private:   
-        vector< unique_ptr<VariableDeclaration> > declarations;
+class DeclarationBlock {
+    public:   
+        DeclarationBlock(){
+        };
+        ~DeclarationBlock(){}
 
     public:
-        DeclarationBlock(){
-            cout << "new DeclarationBlock()" <<endl;
-        };
-        ~DeclarationBlock(){};
+        vector< unique_ptr<VariableDeclaration> > declarations;
 
-        VariableDeclaration* addNewVariableDeclaration(string& name, string& dataType);
-        int numberOfDeclarations();
-        VariableDeclaration* getVariableDeclaration(const int index);
-
-    
 };
 
-class VariableDeclaration : VariableAcceptor {
+class VarBlock : public DeclarationBlock{
+    public: 
+        VarBlock(): DeclarationBlock(){};
+        ~VarBlock(){};
+};
+
+
+class VariableDeclaration : public VariableAcceptor {
     private:
-         string name;
-         string dataType;
+
 
     public:
          VariableDeclaration(string& name, string& dataType): 
              name(name), dataType(dataType){
              };
         ~VariableDeclaration(){};
-        string getName();
-        string getDataType();
 
+        string name;
+        string dataType;
 };
 
-class Pou : DeclarationsAcceptor
+class Pou 
 {
-    private:
-        string name;
-        vector< unique_ptr<DeclarationBlock> > declarationBlocks;
 
     public:
-        Pou(string& name) :
-            name(name) {};
-            
+        Pou(){};
         ~Pou(){};
 
-        string& getName();
-        DeclarationBlock* addNewDeclarationBlock();
 
+    public:
+        string name;
+        vector< unique_ptr<DeclarationBlock> > declarationBlocks;
+};
 
-        int numberOfDeclarationBlocks();
-        DeclarationBlock* getDeclarationBlock(const int index);
-        vector< unique_ptr<DeclarationBlock> >::iterator begin();
+class Program : public Pou{
+    public:
+        Program():Pou(){};
+        ~Program();
+        
 };

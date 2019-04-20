@@ -33,7 +33,7 @@ TEST(PouParserTests, aPouCanBeParsed){
         replace(program, "<NAME>", pouNames.at(i));
         
         auto pou = StringParser::parse_from_string(program);       
-        ASSERT_EQ(pouNames.at(i), pou->getName());
+        ASSERT_EQ(pouNames.at(i), pou->name);
     
     }
 }
@@ -47,7 +47,7 @@ TEST(PouParserTests, aPouCanHaveMultipleVARBlocks){
         "END_PROGRAM";
 
         auto pou = StringParser::parse_from_string(program);
-        ASSERT_EQ(3, pou->numberOfDeclarationBlocks());
+        ASSERT_EQ(3, pou->declarationBlocks.size());
 }
 
 TEST(PouParserTests, aVarBlockCanHoldAVariable){
@@ -58,10 +58,11 @@ TEST(PouParserTests, aVarBlockCanHoldAVariable){
         "   END_VAR                     "
         "END_PROGRAM                    ";
 
-        auto pou = StringParser::parse_from_string(program);
-        VariableDeclaration* declaration = pou->getDeclarationBlock(0)->getVariableDeclaration(0);
-        ASSERT_EQ("x", declaration->getName());
-        ASSERT_EQ("INT", declaration->getDataType());
+        unique_ptr<Pou> pou = StringParser::parse_from_string(program);
+        
+        auto& declaration = pou->declarationBlocks.at(0)->declarations.at(0);
+        ASSERT_EQ("x", declaration->name);
+        ASSERT_EQ("INT", declaration->dataType);
 }
 
 TEST(PouParserTests, aVarBlockCanHoldSeveralVariables){
@@ -76,21 +77,19 @@ TEST(PouParserTests, aVarBlockCanHoldSeveralVariables){
 
         auto pou = StringParser::parse_from_string(program);
         {
-            VariableDeclaration* declaration = pou->getDeclarationBlock(0)->getVariableDeclaration(0);
-            ASSERT_EQ("x", declaration->getName());
-            ASSERT_EQ("INT", declaration->getDataType());
+            auto& declaration = pou->declarationBlocks.at(0)->declarations.at(0);
+            ASSERT_EQ("x", declaration->name);
+            ASSERT_EQ("INT", declaration->dataType);
         }
         {
-            VariableDeclaration* declaration = pou->getDeclarationBlock(1)->getVariableDeclaration(0);
-            ASSERT_EQ("y", declaration->getName());
-            ASSERT_EQ("LONG", declaration->getDataType());
+            auto& declaration = pou->declarationBlocks.at(0)->declarations.at(1);
+            ASSERT_EQ("y", declaration->name);
+            ASSERT_EQ("LONG", declaration->dataType);
         }
         {
-            VariableDeclaration* declaration = pou->getDeclarationBlock(2)->getVariableDeclaration(0);
-            ASSERT_EQ("z", declaration->getName());
-            ASSERT_EQ("BOOL", declaration->getDataType());
+            auto& declaration = pou->declarationBlocks.at(0)->declarations.at(2);
+            ASSERT_EQ("z", declaration->name);
+            ASSERT_EQ("BOOL", declaration->dataType);
         }
 }
-
-
 

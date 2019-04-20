@@ -73,6 +73,7 @@ file(GLOB AST_SRC
 set(ALL_SRC 
   SlangAstBuilder.cpp 
   StringParser.cpp
+  SyntaxError.cpp
   ${ANTLR_Slang_CXX_OUTPUTS}
   ${AST_SRC}
   )

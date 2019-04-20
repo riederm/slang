@@ -7,7 +7,7 @@
                 "~/projects/slang-llvm/.build/src/antlr4_runtime/src/antlr4_runtime/runtime/Cpp/runtime/src"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "configurationProvider": "vector-of-bool.cmake-tools",

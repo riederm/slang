@@ -1,4 +1,4 @@
-#include <cstring>
+#include <string>
 #include "parser/SlangParser.h"
 #include "parser/SlangLexer.h"
 #include "antlr4-runtime.h"
