@@ -21,4 +21,11 @@ public:
     virtual antlrcpp::Any visitVarDeclarations(SlangParser::VarDeclarationsContext *ctx) override;
 
     virtual antlrcpp::Any visitVariableDeclaration(SlangParser::VariableDeclarationContext *ctx) override;
+
+    virtual antlrcpp::Any visitBlock(SlangParser::BlockContext *ctx) override; 
+
+    virtual antlrcpp::Any visitReference(SlangParser::ReferenceContext *ctx) override;
+
+    virtual antlrcpp::Any visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx) override;
+    
 };

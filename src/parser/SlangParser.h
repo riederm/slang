@@ -15,18 +15,18 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, WS = 19, IDENTIFIER = 20, 
-    NUM_INT = 21, EQUAL = 22, NOT_EQUAL = 23, LT = 24, LE = 25, GE = 26, 
-    GT = 27
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, WS = 20, 
+    IDENTIFIER = 21, NUM_INT = 22, EQUAL = 23, NOT_EQUAL = 24, LT = 25, 
+    LE = 26, GE = 27, GT = 28
   };
 
   enum {
     RulePou = 0, RuleProgram = 1, RuleDeclarations = 2, RuleVarDeclarations = 3, 
     RuleVariableDeclaration = 4, RuleVariableDefinition = 5, RuleTypeRef = 6, 
-    RuleScalarTypeRef = 7, RuleBlock = 8, RuleStatement = 9, RuleExpression = 10, 
-    RuleSimpleExpression = 11, RuleTerm = 12, RuleSignedFactor = 13, RuleFactor = 14, 
-    RuleUnsignedInteger = 15, RuleRelationaloperator = 16, RuleAssignment = 17, 
-    RuleReference = 18
+    RuleScalarTypeRef = 7, RuleBlock = 8, RuleStatement = 9, RuleStructuredStatement = 10, 
+    RuleExpression = 11, RuleSimpleExpression = 12, RuleTerm = 13, RuleSignedFactor = 14, 
+    RuleFactor = 15, RuleUnsignedInteger = 16, RuleRelationaloperator = 17, 
+    RuleSimpleStatement = 18, RuleAssignmentStatement = 19, RuleReference = 20
   };
 
   SlangParser(antlr4::TokenStream *input);
@@ -49,6 +49,7 @@ public:
   class ScalarTypeRefContext;
   class BlockContext;
   class StatementContext;
+  class StructuredStatementContext;
   class ExpressionContext;
   class SimpleExpressionContext;
   class TermContext;
@@ -56,7 +57,8 @@ public:
   class FactorContext;
   class UnsignedIntegerContext;
   class RelationaloperatorContext;
-  class AssignmentContext;
+  class SimpleStatementContext;
+  class AssignmentStatementContext;
   class ReferenceContext; 
 
   class  PouContext : public antlr4::ParserRuleContext {
@@ -197,7 +199,8 @@ public:
   public:
     StatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ExpressionContext *expression();
+    SimpleStatementContext *simpleStatement();
+    StructuredStatementContext *structuredStatement();
 
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -205,6 +208,18 @@ public:
   };
 
   StatementContext* statement();
+
+  class  StructuredStatementContext : public antlr4::ParserRuleContext {
+  public:
+    StructuredStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  StructuredStatementContext* structuredStatement();
 
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
@@ -318,20 +333,33 @@ public:
 
   RelationaloperatorContext* relationaloperator();
 
-  class  AssignmentContext : public antlr4::ParserRuleContext {
+  class  SimpleStatementContext : public antlr4::ParserRuleContext {
   public:
-    SlangParser::ReferenceContext *ref = nullptr;;
-    AssignmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SimpleStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ExpressionContext *expression();
-    ReferenceContext *reference();
+    AssignmentStatementContext *assignmentStatement();
 
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
-  AssignmentContext* assignment();
+  SimpleStatementContext* simpleStatement();
+
+  class  AssignmentStatementContext : public antlr4::ParserRuleContext {
+  public:
+    antlr4::Token *ref = nullptr;;
+    AssignmentStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExpressionContext *expression();
+    antlr4::tree::TerminalNode *IDENTIFIER();
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  AssignmentStatementContext* assignmentStatement();
 
   class  ReferenceContext : public antlr4::ParserRuleContext {
   public:

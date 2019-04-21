@@ -2,14 +2,17 @@
 #include "StringParser.h"
 #include "SlangAstBuilder.h"
 #include "ast/pou.h"
-#include "SyntaxError.h"
+#include "ast/syntaxError.h"
+#include "antlr4-runtime.h"
+#include "ast/parseResult.h"
 
-unique_ptr<Pou> StringParser::parse_from_string(const string& src){
+
+unique_ptr<ParseResult> StringParser::parse_from_string(const string& src){
     StringParser parser;
     return parser.parse(src);
 }
 
-unique_ptr<Pou> StringParser::parse(const string& src){
+unique_ptr<ParseResult> StringParser::parse(const string& src){
     
     cleanUp();
 
@@ -18,12 +21,17 @@ unique_ptr<Pou> StringParser::parse(const string& src){
     tokenStream = new CommonTokenStream(lexer);   
     parser = new SlangParser(tokenStream);
     
+
     auto errorListener = unique_ptr<VectorErrorListener>(new VectorErrorListener());
     parser->addErrorListener(errorListener.get());
-    SlangAstBuilder astBuilder;
     
-    Pou* pou = astBuilder.visit(parser->pou()).as<Pou*>();
-    return std::unique_ptr<Pou>(pou);
+    
+    SlangAstBuilder astBuilder;
+    auto pou = astBuilder.visit(parser->pou()).as<Pou*>();
+    auto result = new ParseResult(
+                                std::unique_ptr<Pou>(pou),
+                                errorListener->syntaxErrors);
+    return std::unique_ptr<ParseResult>(result);
 }
 
 void StringParser::cleanUp(){

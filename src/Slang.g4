@@ -31,7 +31,11 @@ block :
    statements+=statement*;
 
 statement :
-   expression;
+   simpleStatement
+   | structuredStatement;
+
+structuredStatement:
+   'STRUCTURED_STATEMENT';
 
 expression: 
    simpleExpression (relationalOperator=('='|'<>'|'<'|'>'|'<='|'>=') expression)?;
@@ -40,7 +44,7 @@ simpleExpression
    : term (additiveOperator=('+'|'-'|'OR') simpleExpression)?;
 
 term:
-   signedFactor (multiplicativeOperator=('*'|'/'|'MOD'|'AND') term);
+   signedFactor (multiplicativeOperator=('*'|'/'|'MOD'|'AND') term)?;
 
 signedFactor:
    prefix=('+'|'-')? factor;
@@ -62,8 +66,11 @@ relationaloperator:
    | GT
    ;
 
-assignment:
-   ref = reference ':=' expression;
+simpleStatement :
+   assignmentStatement ';';
+
+assignmentStatement:
+   ref = IDENTIFIER ':=' expression;
 
 reference:
    IDENTIFIER;

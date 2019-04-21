@@ -15,6 +15,11 @@ class Pou;
 class DeclarationBlock;
 class VariableDeclaration;
 
+class Expression;
+class Reference;
+class Assignment;
+class Block;
+
 
 
 class DeclarationBlock {
@@ -60,6 +65,7 @@ class Pou
     public:
         string name;
         vector< unique_ptr<DeclarationBlock> > declarationBlocks;
+        unique_ptr<Block> body;
 };
 
 class Program : public Pou{
@@ -68,3 +74,26 @@ class Program : public Pou{
         ~Program();
         
 };
+
+
+class Expression {
+
+};
+
+class Reference : public Expression {
+    public:
+        string identifier;
+};
+
+class Assignment : public Expression {
+    public:
+        unique_ptr<Expression> left = unique_ptr<Expression>();
+        unique_ptr<Expression> right = unique_ptr<Expression>();
+};
+
+class Block {
+    public:
+        Block(){};
+        vector <unique_ptr<Expression> > expressions;
+};
+

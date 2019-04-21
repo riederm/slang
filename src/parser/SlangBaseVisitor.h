@@ -57,6 +57,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitStructuredStatement(SlangParser::StructuredStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitExpression(SlangParser::ExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -85,7 +89,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitAssignment(SlangParser::AssignmentContext *ctx) override {
+  virtual antlrcpp::Any visitSimpleStatement(SlangParser::SimpleStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx) override {
     return visitChildren(ctx);
   }
 

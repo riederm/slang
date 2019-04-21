@@ -4,7 +4,9 @@
 #include "../StringParser.h"
 #include <vector>
 #include "../ast/pou.h"
+#include "../ast/parseResult.h"
 #include <algorithm>
+
 
 using namespace std;
 
@@ -14,6 +16,17 @@ bool replace(std::string& str, const std::string& from, const std::string& to) {
         return false;
     str.replace(start_pos, from.length(), to);
     return true;
+}
+
+TEST(PouParserTests, theParserReportsErrors){
+    string program =
+        "PROGRAM "
+        "   VAR END_VAR   "
+        "END_PROGRAM";
+
+        auto parseResult = StringParser::parse_from_string(program);
+        ASSERT_EQ(1, parseResult->syntaxErrors.size());
+
 }
 
 TEST(PouParserTests, aPouCanBeParsed){
@@ -32,8 +45,8 @@ TEST(PouParserTests, aPouCanBeParsed){
 
         replace(program, "<NAME>", pouNames.at(i));
         
-        auto pou = StringParser::parse_from_string(program);       
-        ASSERT_EQ(pouNames.at(i), pou->name);
+        auto parseResult = StringParser::parse_from_string(program);       
+        ASSERT_EQ(pouNames.at(i), parseResult->pou->name);
     
     }
 }
@@ -46,8 +59,8 @@ TEST(PouParserTests, aPouCanHaveMultipleVARBlocks){
         "   VAR END_VAR                 "
         "END_PROGRAM";
 
-        auto pou = StringParser::parse_from_string(program);
-        ASSERT_EQ(3, pou->declarationBlocks.size());
+        auto parseResult = StringParser::parse_from_string(program);
+        ASSERT_EQ(3, parseResult->pou->declarationBlocks.size());
 }
 
 TEST(PouParserTests, aVarBlockCanHoldAVariable){
@@ -58,9 +71,9 @@ TEST(PouParserTests, aVarBlockCanHoldAVariable){
         "   END_VAR                     "
         "END_PROGRAM                    ";
 
-        unique_ptr<Pou> pou = StringParser::parse_from_string(program);
-        
-        auto& declaration = pou->declarationBlocks.at(0)->declarations.at(0);
+        auto parseResult = StringParser::parse_from_string(program);       
+        auto& declaration = parseResult->pou->declarationBlocks.at(0)->declarations.at(0);
+
         ASSERT_EQ("x", declaration->name);
         ASSERT_EQ("INT", declaration->dataType);
 }
@@ -75,7 +88,8 @@ TEST(PouParserTests, aVarBlockCanHoldSeveralVariables){
         "   END_VAR                     "
         "END_PROGRAM                    ";
 
-        auto pou = StringParser::parse_from_string(program);
+        unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+        auto pou = parseResult->pou.get();
         {
             auto& declaration = pou->declarationBlocks.at(0)->declarations.at(0);
             ASSERT_EQ("x", declaration->name);
@@ -91,5 +105,30 @@ TEST(PouParserTests, aVarBlockCanHoldSeveralVariables){
             ASSERT_EQ("z", declaration->name);
             ASSERT_EQ("BOOL", declaration->dataType);
         }
+}
+
+TEST(PouParserTests, simpleAssignmentsWork){
+    string program =
+        "PROGRAM MyPRG                  "
+        "   VAR                         "
+        "       x : INT;                "
+        "       y : INT;                "
+        "   END_VAR                     "
+        "                               "
+        "   x := y;                     "
+        "                               "
+        "END_PROGRAM                    ";
+
+        unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+        //THEN I assume no error
+        ASSERT_EQ(0, parseResult->syntaxErrors.size());
+        ASSERT_NE(nullptr, parseResult->pou->body);
+        ASSERT_EQ(1, parseResult->pou->body->expressions.size());
+        Expression* stmt = parseResult->pou->body->expressions.at(0).get();
+        auto assignment = static_cast<Assignment*>(stmt);
+        ASSERT_NE(nullptr,assignment);
+        
+        
+
 }
 

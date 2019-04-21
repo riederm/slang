@@ -40,6 +40,8 @@ public:
 
     virtual antlrcpp::Any visitStatement(SlangParser::StatementContext *context) = 0;
 
+    virtual antlrcpp::Any visitStructuredStatement(SlangParser::StructuredStatementContext *context) = 0;
+
     virtual antlrcpp::Any visitExpression(SlangParser::ExpressionContext *context) = 0;
 
     virtual antlrcpp::Any visitSimpleExpression(SlangParser::SimpleExpressionContext *context) = 0;
@@ -54,7 +56,9 @@ public:
 
     virtual antlrcpp::Any visitRelationaloperator(SlangParser::RelationaloperatorContext *context) = 0;
 
-    virtual antlrcpp::Any visitAssignment(SlangParser::AssignmentContext *context) = 0;
+    virtual antlrcpp::Any visitSimpleStatement(SlangParser::SimpleStatementContext *context) = 0;
+
+    virtual antlrcpp::Any visitAssignmentStatement(SlangParser::AssignmentStatementContext *context) = 0;
 
     virtual antlrcpp::Any visitReference(SlangParser::ReferenceContext *context) = 0;
 

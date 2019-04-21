@@ -6,6 +6,7 @@
 
 
 using namespace std;
+using namespace antlrcpp;
 
 SlangAstBuilder::SlangAstBuilder(/* args */)
 {
@@ -15,7 +16,7 @@ SlangAstBuilder::~SlangAstBuilder()
 {
 }
 
-antlrcpp::Any SlangAstBuilder::visitProgram(SlangParser::ProgramContext *pouContext) {
+Any SlangAstBuilder::visitProgram(SlangParser::ProgramContext *pouContext) {
     string name = pouContext->pouName->getText();
     
     auto declarations = pouContext->declarations();
@@ -29,10 +30,10 @@ antlrcpp::Any SlangAstBuilder::visitProgram(SlangParser::ProgramContext *pouCont
         }
     });
 
-    return antlrcpp::Any(p);
-}
+    return Any(p);
+};
 
-antlrcpp::Any SlangAstBuilder::visitVarDeclarations(SlangParser::VarDeclarationsContext *ctx){  
+Any SlangAstBuilder::visitVarDeclarations(SlangParser::VarDeclarationsContext *ctx){  
     auto varBlock = new VarBlock();
 
     for(auto &varDeclr : ctx->variableDeclarations){
@@ -46,43 +47,38 @@ antlrcpp::Any SlangAstBuilder::visitVarDeclarations(SlangParser::VarDeclarations
         }
     }
 
-    return antlrcpp::Any(varBlock);
-}
+    return Any(varBlock);
+};
 
-antlrcpp::Any SlangAstBuilder::visitVariableDeclaration(SlangParser::VariableDeclarationContext *ctx){
+Any SlangAstBuilder::visitVariableDeclaration(SlangParser::VariableDeclarationContext *ctx){
     auto name = ctx->variableName->getText();
     auto dataType = ctx->type->scalarTypeRef()->typeName->getText();
 
-    return antlrcpp::Any(new VariableDeclaration(name, dataType));
-}
+    return Any(new VariableDeclaration(name, dataType));
+};
 
-// void fillDeclarationBlock(  DeclarationBlock* block, 
-//                             SlangParser::DeclarationsContext* d){
-
-//     for (size_t i = 0; i < d->variableDeclaration().size(); i++)
-//     {
-//         auto v = d->variableDeclaration().at(i);
-//         string name = v->IDENTIFIER()->getText();
-//         string dataType = v->typeRef()->scalarTypeRef()->getText();
-//         auto decl = std::unique_ptr<VariableDeclaration>(new VariableDeclaration(name, dataType));
-//         block->declarations.push_back(std::move(decl));
-//     }
-// }
-
-// unique_ptr<Pou> SlangAstBuilder::transform(SlangParser::PouContext* pouContext){
-//     string name = pouContext->pouName->getText();
+Any SlangAstBuilder::visitBlock(SlangParser::BlockContext *ctx){
+    auto block = unique_ptr<Block>(new Block());
     
-//     auto declarations = pouContext->declarations();
-//     Pou* p = new Program();
-//     p->name = name;
-    
-//     for_each(declarations.begin(), declarations.end(), [p](SlangParser::DeclarationsContext* d){
-//         auto block = unique_ptr<VarBlock>(new VarBlock());
-//         fillDeclarationBlock(block.get(), d);
-//         p->declarationBlocks.push_back(std::move(block));
-//     });
+    for (SlangParser::StatementContext* stmtContext : ctx->statements){
+        auto anyStatement = visitStatement(stmtContext);
+        if (anyStatement.is<Expression>()){
+            block->expressions.push_back(unique_ptr<Expression>(anyStatement.as<Expression*>()));
+        }
+    }
 
-//     return unique_ptr<Pou>(p);
-// }
+    return Any(move(block));
+};
+
+
+Any SlangAstBuilder::visitReference(SlangParser::ReferenceContext *ctx){
+    auto reference = new Reference();
+    reference->identifier = ctx->IDENTIFIER()->getText();
+    return Any(reference);
+};
+
+Any SlangAstBuilder::visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx){
+    return nullptr;
+};
 
 

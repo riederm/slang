@@ -3,6 +3,7 @@
 #include "parser/SlangLexer.h"
 #include "antlr4-runtime.h"
 #include "ast/pou.h"
+#include "ast/parseResult.h"
 
 #include <stdio.h>
 
@@ -28,7 +29,7 @@ public:
     StringParser();
     ~StringParser();
 
-    static unique_ptr<Pou> parse_from_string(const string& src);
+    static unique_ptr<ParseResult> parse_from_string(const string& src);
 
-    unique_ptr<Pou> parse(const string& src);
+    unique_ptr<ParseResult> parse(const string& src);
 };
