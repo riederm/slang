@@ -25,7 +25,8 @@ TEST(PouParserTests, theParserReportsErrors){
         "END_PROGRAM";
 
         auto parseResult = StringParser::parse_from_string(program);
-        ASSERT_EQ(1, parseResult->syntaxErrors.size());
+        ASSERT_NE(nullptr, parseResult->syntaxErrors);
+        ASSERT_EQ(1, parseResult->syntaxErrors->size());
 
 }
 
@@ -45,7 +46,7 @@ TEST(PouParserTests, aPouCanBeParsed){
 
         replace(program, "<NAME>", pouNames.at(i));
         
-        auto parseResult = StringParser::parse_from_string(program);       
+        auto parseResult = StringParser::parse_from_string(program);
         ASSERT_EQ(pouNames.at(i), parseResult->pou->name);
     
     }
@@ -114,20 +115,26 @@ TEST(PouParserTests, simpleAssignmentsWork){
         "       x : INT;                "
         "       y : INT;                "
         "   END_VAR                     "
-        "                               "
         "   x := y;                     "
-        "                               "
         "END_PROGRAM                    ";
 
         unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
         //THEN I assume no error
-        ASSERT_EQ(0, parseResult->syntaxErrors.size());
+        ASSERT_EQ(0, parseResult->syntaxErrors->size());
         ASSERT_NE(nullptr, parseResult->pou->body);
         ASSERT_EQ(1, parseResult->pou->body->expressions.size());
+
         Expression* stmt = parseResult->pou->body->expressions.at(0).get();
         auto assignment = static_cast<Assignment*>(stmt);
         ASSERT_NE(nullptr,assignment);
-        
+
+        auto left = static_cast<Reference*>(assignment->left.get());
+         ASSERT_NE(nullptr, left);
+        ASSERT_EQ(left->identifier, "x");
+
+        auto right = static_cast<Reference*>(assignment->right.get());
+         ASSERT_NE(nullptr, right);
+        ASSERT_EQ(right->identifier, "y");
         
 
 }

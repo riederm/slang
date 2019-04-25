@@ -15,9 +15,9 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, WS = 20, 
-    IDENTIFIER = 21, NUM_INT = 22, EQUAL = 23, NOT_EQUAL = 24, LT = 25, 
-    LE = 26, GE = 27, GT = 28
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, WS = 19, IDENTIFIER = 20, 
+    NUM_INT = 21, EQUAL = 22, NOT_EQUAL = 23, LT = 24, LE = 25, GE = 26, 
+    GT = 27, SEMI = 28
   };
 
   SlangLexer(antlr4::CharStream *input);

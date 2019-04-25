@@ -16,9 +16,9 @@ class ParseResult
 private:
 public:
     unique_ptr<Pou> pou;
-    vector<pSyntaxError>& syntaxErrors;
-    ParseResult(unique_ptr<Pou> pou, vector<pSyntaxError>& syntaxErrors):
-        pou(std::move(pou)), syntaxErrors(syntaxErrors){};
+    unique_ptr<vector<pSyntaxError>> syntaxErrors;
+    ParseResult(unique_ptr<Pou> pou, unique_ptr<vector<pSyntaxError>> syntaxErrors):
+        pou(std::move(pou)), syntaxErrors(std::move(syntaxErrors)){};
 
     
     

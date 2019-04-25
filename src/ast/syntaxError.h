@@ -28,7 +28,10 @@ class VectorErrorListener : public BaseErrorListener
 {
 
     public:
-        vector<unique_ptr<SyntaxError>> syntaxErrors;
+        VectorErrorListener(vector<unique_ptr<SyntaxError>>* v) : syntaxErrors(v){
+        };
+
+        vector<unique_ptr<SyntaxError>>* syntaxErrors;
         virtual void syntaxError(Recognizer *recognizer, Token * offendingSymbol, size_t line, size_t charPositionInLine,
         const std::string &msg, std::exception_ptr e) override;
         

@@ -1,0 +1,7 @@
+PROGRAM MyPRG
+VAR
+    x : INT;
+    y : INT;
+END_VAR
+x := y;
+END_PROGRAM

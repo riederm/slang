@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "grammar-debug",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "example.txt",
+            "grammar": "src/Slang.g4",
+            "startRule": "pou",
+            "printParseTree": true,
+            "visualParseTree": true
+        }
+    ]
+}

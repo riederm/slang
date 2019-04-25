@@ -27,5 +27,9 @@ public:
     virtual antlrcpp::Any visitReference(SlangParser::ReferenceContext *ctx) override;
 
     virtual antlrcpp::Any visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx) override;
+  
+    virtual antlrcpp::Any visitUnsignedInteger(SlangParser::UnsignedIntegerContext *ctx) override;
+
+    virtual antlrcpp::Any aggregateResult(antlrcpp::Any exisitingResult, const antlrcpp::Any &nextResult) override;
     
 };

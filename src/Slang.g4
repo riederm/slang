@@ -67,10 +67,10 @@ relationaloperator:
    ;
 
 simpleStatement :
-   assignmentStatement ';';
+   assignmentStatement SEMI;
 
 assignmentStatement:
-   ref = IDENTIFIER ':=' expression;
+   left=expression ':=' right=expression;
 
 reference:
    IDENTIFIER;
@@ -94,5 +94,5 @@ LT : '<';
 LE : '<=';
 GE : '>=';
 GT : '>';
-
+SEMI: ';';
 

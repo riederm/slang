@@ -21,16 +21,15 @@ unique_ptr<ParseResult> StringParser::parse(const string& src){
     tokenStream = new CommonTokenStream(lexer);   
     parser = new SlangParser(tokenStream);
     
-
-    auto errorListener = unique_ptr<VectorErrorListener>(new VectorErrorListener());
+    auto errors = unique_ptr<vector<unique_ptr<SyntaxError>>>(new vector<unique_ptr<SyntaxError>>());
+    auto errorListener = unique_ptr<VectorErrorListener>(new VectorErrorListener(errors.get()));
     parser->addErrorListener(errorListener.get());
-    
     
     SlangAstBuilder astBuilder;
     auto pou = astBuilder.visit(parser->pou()).as<Pou*>();
     auto result = new ParseResult(
                                 std::unique_ptr<Pou>(pou),
-                                errorListener->syntaxErrors);
+                                std::move(errors));
     return std::unique_ptr<ParseResult>(result);
 }
 

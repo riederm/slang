@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include "ast.h"
-#include "ast/astAcceptor.h"
 
 #include <iostream>
 
@@ -40,7 +39,7 @@ class VarBlock : public DeclarationBlock{
 };
 
 
-class VariableDeclaration : public VariableAcceptor {
+class VariableDeclaration {
     private:
 
 
@@ -77,7 +76,10 @@ class Program : public Pou{
 
 
 class Expression {
-
+    public:
+        virtual int eval(){
+            return 0;
+        };
 };
 
 class Reference : public Expression {
