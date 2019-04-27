@@ -77,6 +77,9 @@ class Program : public Pou{
 
 class Expression {
     public:
+        int field = 0;
+        string type = "";
+
         virtual int eval(){
             return 0;
         };
@@ -84,13 +87,52 @@ class Expression {
 
 class Reference : public Expression {
     public:
+        Reference(): Expression(){
+            type="Reference";
+        }
         string identifier;
 };
 
-class Assignment : public Expression {
+class DualOperatorExpression : public Expression{
+    public: 
+    unique_ptr<Expression> left = unique_ptr<Expression>();
+    unique_ptr<Expression> right = unique_ptr<Expression>();
+};
+
+class Assignment : public DualOperatorExpression {
     public:
-        unique_ptr<Expression> left = unique_ptr<Expression>();
-        unique_ptr<Expression> right = unique_ptr<Expression>();
+        Assignment(): DualOperatorExpression(){
+            type="Assignment";
+        }
+};
+
+enum SumOperator{ PLUS, MINUS };
+
+class SumExpression : public DualOperatorExpression {
+    public:
+        SumOperator op = PLUS;
+        SumExpression(): DualOperatorExpression(){
+            type="SumExpression";
+        }
+};
+
+class NotExpression : public Expression{
+    public:
+        NotExpression():Expression(){
+            type="NotExpression";
+        }
+        unique_ptr<Expression> op = unique_ptr<Expression>();
+};
+
+enum LogicOperator{AND, OR, XOR};
+
+class LogicExpression : public DualOperatorExpression {
+    public:
+        LogicOperator op;
+        LogicExpression(): DualOperatorExpression(){
+            type="LogicExpression";
+        }
+
 };
 
 class Block {

@@ -52,7 +52,11 @@ public:
 
     virtual antlrcpp::Any visitFactor(SlangParser::FactorContext *context) = 0;
 
+    virtual antlrcpp::Any visitNotFactor(SlangParser::NotFactorContext *context) = 0;
+
     virtual antlrcpp::Any visitUnsignedInteger(SlangParser::UnsignedIntegerContext *context) = 0;
+
+    virtual antlrcpp::Any visitBoolLiteral(SlangParser::BoolLiteralContext *context) = 0;
 
     virtual antlrcpp::Any visitRelationaloperator(SlangParser::RelationaloperatorContext *context) = 0;
 

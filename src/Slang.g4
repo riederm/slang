@@ -38,10 +38,10 @@ structuredStatement:
    'STRUCTURED_STATEMENT';
 
 expression: 
-   simpleExpression (relationalOperator=('='|'<>'|'<'|'>'|'<='|'>=') expression)?;
+   simpleExpression (op=('='|'<>'|'<'|'>'|'<='|'>=') expression)?;
 
 simpleExpression
-   : term (additiveOperator=('+'|'-'|'OR') simpleExpression)?;
+   : left=term (additiveOperator=('+'|'-'|'OR') right=simpleExpression)?;
 
 term:
    signedFactor (multiplicativeOperator=('*'|'/'|'MOD'|'AND') term)?;
@@ -50,12 +50,19 @@ signedFactor:
    prefix=('+'|'-')? factor;
 
 factor:
-   reference
-   | 'NOT' factor
-   | unsignedInteger;
+   | notFactor
+   | boolLiteral
+   | unsignedInteger
+   | reference;
+
+notFactor:
+   'NOT' op=factor;
 
 unsignedInteger: 
    value=NUM_INT;
+
+boolLiteral:
+   value=(TRUE|FALSE);
 
 relationaloperator: 
    EQUAL
@@ -77,6 +84,9 @@ reference:
 
 WS
    : [ \t\r\n] -> skip;
+
+TRUE: 'TRUE';
+FALSE: 'FALSE';
 
 IDENTIFIER : CHAR (CHAR | DIGIT | '_')*;
 

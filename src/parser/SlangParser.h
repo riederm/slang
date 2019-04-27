@@ -15,9 +15,9 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, WS = 19, IDENTIFIER = 20, 
-    NUM_INT = 21, EQUAL = 22, NOT_EQUAL = 23, LT = 24, LE = 25, GE = 26, 
-    GT = 27, SEMI = 28
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, WS = 19, TRUE = 20, 
+    FALSE = 21, IDENTIFIER = 22, NUM_INT = 23, EQUAL = 24, NOT_EQUAL = 25, 
+    LT = 26, LE = 27, GE = 28, GT = 29, SEMI = 30
   };
 
   enum {
@@ -25,8 +25,9 @@ public:
     RuleVariableDeclaration = 4, RuleVariableDefinition = 5, RuleTypeRef = 6, 
     RuleScalarTypeRef = 7, RuleBlock = 8, RuleStatement = 9, RuleStructuredStatement = 10, 
     RuleExpression = 11, RuleSimpleExpression = 12, RuleTerm = 13, RuleSignedFactor = 14, 
-    RuleFactor = 15, RuleUnsignedInteger = 16, RuleRelationaloperator = 17, 
-    RuleSimpleStatement = 18, RuleAssignmentStatement = 19, RuleReference = 20
+    RuleFactor = 15, RuleNotFactor = 16, RuleUnsignedInteger = 17, RuleBoolLiteral = 18, 
+    RuleRelationaloperator = 19, RuleSimpleStatement = 20, RuleAssignmentStatement = 21, 
+    RuleReference = 22
   };
 
   SlangParser(antlr4::TokenStream *input);
@@ -55,7 +56,9 @@ public:
   class TermContext;
   class SignedFactorContext;
   class FactorContext;
+  class NotFactorContext;
   class UnsignedIntegerContext;
+  class BoolLiteralContext;
   class RelationaloperatorContext;
   class SimpleStatementContext;
   class AssignmentStatementContext;
@@ -224,7 +227,7 @@ public:
 
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
-    antlr4::Token *relationalOperator = nullptr;;
+    antlr4::Token *op = nullptr;;
     ExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     SimpleExpressionContext *simpleExpression();
@@ -245,7 +248,9 @@ public:
 
   class  SimpleExpressionContext : public antlr4::ParserRuleContext {
   public:
+    SlangParser::TermContext *left = nullptr;;
     antlr4::Token *additiveOperator = nullptr;;
+    SlangParser::SimpleExpressionContext *right = nullptr;;
     SimpleExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TermContext *term();
@@ -291,9 +296,10 @@ public:
   public:
     FactorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ReferenceContext *reference();
-    FactorContext *factor();
+    NotFactorContext *notFactor();
+    BoolLiteralContext *boolLiteral();
     UnsignedIntegerContext *unsignedInteger();
+    ReferenceContext *reference();
 
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -301,6 +307,20 @@ public:
   };
 
   FactorContext* factor();
+
+  class  NotFactorContext : public antlr4::ParserRuleContext {
+  public:
+    SlangParser::FactorContext *op = nullptr;;
+    NotFactorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    FactorContext *factor();
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  NotFactorContext* notFactor();
 
   class  UnsignedIntegerContext : public antlr4::ParserRuleContext {
   public:
@@ -315,6 +335,21 @@ public:
   };
 
   UnsignedIntegerContext* unsignedInteger();
+
+  class  BoolLiteralContext : public antlr4::ParserRuleContext {
+  public:
+    antlr4::Token *value = nullptr;;
+    BoolLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *TRUE();
+    antlr4::tree::TerminalNode *FALSE();
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  BoolLiteralContext* boolLiteral();
 
   class  RelationaloperatorContext : public antlr4::ParserRuleContext {
   public:

@@ -15,7 +15,13 @@ SlangAstBuilder::~SlangAstBuilder()
 }
 
 Expression* getExpression(const Any& any){
-    if (any.is<Reference*>()){
+    if (any.is<Expression*>()){
+        return any.as<Expression*>();
+
+    }else if (any.is<BoolConstant*>()){
+        return any.as<BoolConstant*>();
+
+    }else if (any.is<Reference*>()){
         return any.as<Reference*>();
     
     }else if (any.is<IntConstant*>()){
@@ -23,7 +29,14 @@ Expression* getExpression(const Any& any){
 
     }else if (any.is<Assignment*>()){
         return any.as<Assignment*>();
+    
+    }else if (any.is<SumExpression*>()){
+        return any.as<SumExpression*>();
+    
+    }else if (any.is<LogicExpression*>()){
+        return any.as<LogicExpression*>();
     }
+
 
     return nullptr;
 }
@@ -54,7 +67,7 @@ Any SlangAstBuilder::visitProgram(SlangParser::ProgramContext *pouContext) {
         p->body = unique_ptr<Block>(body.as<Block*>());
     }
 
-    return Any(p);
+    return p;
 };
  
 Any SlangAstBuilder::visitVarDeclarations(SlangParser::VarDeclarationsContext *ctx){  
@@ -71,14 +84,14 @@ Any SlangAstBuilder::visitVarDeclarations(SlangParser::VarDeclarationsContext *c
         }
     }
 
-    return Any(varBlock);
+    return varBlock;
 };
 
 Any SlangAstBuilder::visitVariableDeclaration(SlangParser::VariableDeclarationContext *ctx){
     auto name = ctx->variableName->getText();
     auto dataType = ctx->type->scalarTypeRef()->typeName->getText();
 
-    return Any(new VariableDeclaration(name, dataType));
+    return new VariableDeclaration(name, dataType);
 };
 
 Any SlangAstBuilder::visitBlock(SlangParser::BlockContext *ctx){
@@ -91,7 +104,7 @@ Any SlangAstBuilder::visitBlock(SlangParser::BlockContext *ctx){
         }
     }
 
-    return Any(block);
+    return block;
 };
 
 
@@ -102,13 +115,12 @@ Any SlangAstBuilder::visitReference(SlangParser::ReferenceContext *ctx){
 
     auto e1 = dynamic_cast<Expression*>(reference);
 
-    return Any(reference);
+    return reference;
 };
 
 Any SlangAstBuilder::visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx){
-    auto left = getExpression(visitExpression(ctx->left));
-    auto right = getExpression(visitExpression(ctx->right));
-
+    auto left = getExpression(visit(ctx->left));
+    auto right = getExpression(visit(ctx->right));
 
     auto assignment = new Assignment();
     if (left != nullptr){
@@ -117,11 +129,56 @@ Any SlangAstBuilder::visitAssignmentStatement(SlangParser::AssignmentStatementCo
     if (right != nullptr){
         assignment->right = unique_ptr<Expression>(right);
     }
-    return Any(assignment);
+    return assignment;
 };
+
+void fillDualOperatorExpression(DualOperatorExpression* dualExpr, Expression* left, Expression* right){
+    if (left != nullptr){
+        dualExpr->left = unique_ptr<Expression>(left);
+    }
+    if (right != nullptr){
+        dualExpr->right = unique_ptr<Expression>(right);
+    }
+}
+
+Any SlangAstBuilder::visitSimpleExpression(SlangParser::SimpleExpressionContext *ctx){
+    if (ctx->additiveOperator != nullptr){
+        auto left = getExpression(visit(ctx->left));
+        auto right = getExpression(visit(ctx->right));
+        if (ctx->additiveOperator->getText() == "OR"){
+            auto logicExpr = new LogicExpression();
+            logicExpr->op = LogicOperator::OR;
+            fillDualOperatorExpression(logicExpr, left, right);
+            return logicExpr;
+        }else{
+            auto sum = new SumExpression();
+            if (ctx->additiveOperator->getText() == "-"){
+                sum->op = SumOperator::MINUS;
+            }
+            fillDualOperatorExpression(sum, left, right);
+            return sum;
+        }
+    }else{
+        return SlangBaseVisitor::visitSimpleExpression(ctx);
+    }
+};
+
+Any SlangAstBuilder::visitBoolLiteral(SlangParser::BoolLiteralContext *ctx){
+    auto bc = new BoolConstant();
+    bc->value = (ctx->value->getText() == "TRUE");
+    return bc;
+}
 
 Any SlangAstBuilder::visitUnsignedInteger(SlangParser::UnsignedIntegerContext *ctx){
     auto constant = new IntConstant();
     constant->value = atoi(ctx->value->getText().c_str());
-    return Any(constant);
+    return constant;
+};
+
+Any SlangAstBuilder::visitNotFactor(SlangParser::NotFactorContext *ctx){
+    auto notExpr = new NotExpression();
+    if (ctx->op != nullptr){
+        notExpr->op = unique_ptr<Expression>(getExpression(visit(ctx->op)));
+    }
+    return notExpr;
 };

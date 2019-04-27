@@ -81,7 +81,15 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitNotFactor(SlangParser::NotFactorContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitUnsignedInteger(SlangParser::UnsignedIntegerContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitBoolLiteral(SlangParser::BoolLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 

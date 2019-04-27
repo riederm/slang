@@ -4,6 +4,7 @@
 #include "../StringParser.h"
 #include <vector>
 #include "../ast/pou.h"
+#include "../ast/constants.h"
 #include "../ast/parseResult.h"
 #include <algorithm>
 
@@ -129,13 +130,142 @@ TEST(PouParserTests, simpleAssignmentsWork){
         ASSERT_NE(nullptr,assignment);
 
         auto left = static_cast<Reference*>(assignment->left.get());
-         ASSERT_NE(nullptr, left);
+        ASSERT_NE(nullptr, left);
         ASSERT_EQ(left->identifier, "x");
 
         auto right = static_cast<Reference*>(assignment->right.get());
-         ASSERT_NE(nullptr, right);
+        ASSERT_NE(nullptr, right);
         ASSERT_EQ(right->identifier, "y");
-        
-
 }
 
+
+TEST(PouParserTests, simpleAssignmentsWithConstantsWork){
+    string program =
+        "PROGRAM MyPRG                  "
+        "   VAR                         "
+        "       x : INT;                "
+        "   END_VAR                     "
+        "   x := 7;                     "
+        "END_PROGRAM                    ";
+
+        unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+        //THEN I assume no error
+        ASSERT_EQ(0, parseResult->syntaxErrors->size());
+        ASSERT_NE(nullptr, parseResult->pou->body);
+        ASSERT_EQ(1, parseResult->pou->body->expressions.size());
+
+        Expression* stmt = parseResult->pou->body->expressions.at(0).get();
+        auto assignment = static_cast<Assignment*>(stmt);
+        ASSERT_NE(nullptr,assignment);
+
+        auto left = static_cast<Reference*>(assignment->left.get());
+        ASSERT_NE(nullptr, left);
+        ASSERT_EQ(left->identifier, "x");
+
+        auto right = static_cast<IntConstant*>(assignment->right.get());
+        ASSERT_NE(nullptr, right);
+        ASSERT_EQ(right->value, 7);
+}
+
+TEST(PouParserTests, simpleAssignmentsWithAdditionWorks){
+    //GIVEN an assignment with an addition
+    string program =
+        "PROGRAM MyPRG                  "
+        "   VAR                         "
+        "       x : INT;                "
+        "   END_VAR                     "
+        "   x := 7 - 3;                 "
+        "END_PROGRAM                    ";
+
+    //WHEN I parse the program
+    unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+
+    //THEN I assume no error
+    ASSERT_EQ(0, parseResult->syntaxErrors->size());
+    //AND the right expression of the assignment should be a SumExpression 
+    auto assignment = static_cast<Assignment*>(parseResult->pou->body->expressions.at(0).get());
+    auto sumExpression = static_cast<SumExpression*>(assignment->right.get());
+    // left = "7"        
+    auto left = static_cast<IntConstant*>(sumExpression->left.get());
+    ASSERT_NE(nullptr, left);
+    ASSERT_EQ(left->value, 7);
+    // right = "3"
+    auto right = static_cast<IntConstant*>(sumExpression->right.get());
+    ASSERT_NE(nullptr, right);
+    ASSERT_EQ(right->value, 3);
+    // operator = "-"
+    ASSERT_EQ(sumExpression->op, SumOperator::MINUS);
+        
+}
+
+TEST(PouParserTests, simpleAssignmentsWithMulitpleAdditionsWorks){
+    //GIVEN an assignment with an addition
+    string program =
+        "PROGRAM MyPRG                  "
+        "   VAR                         "
+        "       x : INT;                "
+        "   END_VAR                     "
+        "   x := 7 - 3 + 9;             "
+        "END_PROGRAM                    ";
+
+    //WHEN I parse the program
+    unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+
+    //THEN I assume no error
+    ASSERT_EQ(0, parseResult->syntaxErrors->size());
+    //AND the right expression of the assignment should be a SumExpression 
+    auto assignment = static_cast<Assignment*>(parseResult->pou->body->expressions.at(0).get());
+    auto sumExpression = static_cast<SumExpression*>(assignment->right.get());
+    // left = "7"        
+    auto left = static_cast<IntConstant*>(sumExpression->left.get());
+    ASSERT_NE(nullptr, left);
+    ASSERT_EQ(left->value, 7);
+    // operator = "-""
+    ASSERT_EQ(sumExpression->op, SumOperator::MINUS);
+
+    // right = "3 + 9"
+    auto subSum = static_cast<SumExpression*>(sumExpression->right.get());
+    ASSERT_NE(nullptr, right);
+
+    auto subLeft = static_cast<IntConstant*>(subSum->left.get());
+    ASSERT_NE(nullptr, right);
+    ASSERT_EQ(subLeft->value, 3);
+    
+    auto subRight = static_cast<IntConstant*>(subSum->right.get());
+    ASSERT_NE(nullptr, subRight);
+    ASSERT_EQ(subRight->value, 9);
+    // operator = "+"
+    ASSERT_EQ(subSum->op, SumOperator::PLUS);
+}
+
+TEST(PouParserTests, simpleAssignmentsWithLogicExpressionWorks){
+    //GIVEN an assignment with an addition
+    string program =
+        "PROGRAM MyPRG             "
+        "   VAR                    "
+        "       x : BOOL;          "
+        "   END_VAR                "
+        "   x := FALSE OR TRUE;    "
+        "END_PROGRAM               ";
+
+    //WHEN I parse the program
+    unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+
+    //THEN I assume no error
+    ASSERT_EQ(0, parseResult->syntaxErrors->size());
+    //AND the right expression of the assignment should be a SumExpression 
+    auto assignment = static_cast<Assignment*>(parseResult->pou->body->expressions.at(0).get());
+    auto logicExpression = static_cast<LogicExpression*>(assignment->right.get());
+    // left = "FALSE"        
+    auto left = static_cast<BoolConstant*>(logicExpression->left.get());
+    ASSERT_NE(nullptr, left);
+    ASSERT_EQ(left->value, false);
+
+    // operator = "OR"
+    ASSERT_EQ(logicExpression->op, LogicOperator::OR);
+
+    // right = "FALSE"
+    auto right = static_cast<BoolConstant*>(logicExpression->right.get());
+    ASSERT_NE(nullptr, right);
+    ASSERT_EQ(right->value, true);
+}
