@@ -15,6 +15,7 @@ SlangAstBuilder::~SlangAstBuilder()
 }
 
 Expression* getExpression(const Any& any){
+
     if (any.is<Expression*>()){
         return any.as<Expression*>();
 
@@ -35,8 +36,11 @@ Expression* getExpression(const Any& any){
     
     }else if (any.is<LogicExpression*>()){
         return any.as<LogicExpression*>();
-    }
+    
+    }else if (any.is<CallStatement*>()){
+        return any.as<CallStatement*>();
 
+    }
 
     return nullptr;
 }
@@ -58,7 +62,7 @@ Any SlangAstBuilder::visitProgram(SlangParser::ProgramContext *pouContext) {
     for_each(declarations.begin(), declarations.end(), [p, this](SlangParser::DeclarationsContext* d){
         auto block = visitDeclarations(d);
         if (block.is<VarBlock*>()){
-            p->declarationBlocks.push_back(unique_ptr<DeclarationBlock>(block.as<VarBlock*>()));
+            p->declarationBlocks.push_back(unique_ptr<VarBlock>(block.as<VarBlock*>()));
         }
     });
 
@@ -111,25 +115,25 @@ Any SlangAstBuilder::visitBlock(SlangParser::BlockContext *ctx){
 Any SlangAstBuilder::visitReference(SlangParser::ReferenceContext *ctx){
     auto reference = new Reference();
     reference->identifier = ctx->IDENTIFIER()->getText();
-    reference->eval();
-
-    auto e1 = dynamic_cast<Expression*>(reference);
-
     return reference;
 };
 
 Any SlangAstBuilder::visitAssignmentStatement(SlangParser::AssignmentStatementContext *ctx){
-    auto left = getExpression(visit(ctx->left));
-    auto right = getExpression(visit(ctx->right));
+    if (ctx->right != nullptr){
+        auto left = getExpression(visit(ctx->left));
+        auto right = getExpression(visit(ctx->right));
 
-    auto assignment = new Assignment();
-    if (left != nullptr){
-        assignment->left = unique_ptr<Expression>(left);
+        auto assignment = new Assignment();
+        if (left != nullptr){
+            assignment->left = unique_ptr<Expression>(left);
+        }
+        if (right != nullptr){
+            assignment->right = unique_ptr<Expression>(right);
+        }
+        return assignment;
+    }else{
+        return SlangBaseVisitor::visitAssignmentStatement(ctx);
     }
-    if (right != nullptr){
-        assignment->right = unique_ptr<Expression>(right);
-    }
-    return assignment;
 };
 
 void fillDualOperatorExpression(DualOperatorExpression* dualExpr, Expression* left, Expression* right){
@@ -182,3 +186,13 @@ Any SlangAstBuilder::visitNotFactor(SlangParser::NotFactorContext *ctx){
     }
     return notExpr;
 };
+
+Any SlangAstBuilder::visitCallExpression(SlangParser::CallExpressionContext *ctx){
+    if (ctx->parameters != nullptr){
+        auto callStatement = new CallStatement();
+        callStatement->op = unique_ptr<Reference>(visitReference(ctx->op).as<Reference*>());
+        return callStatement;
+    }else{
+        return SlangBaseVisitor::visitCallExpression(ctx);
+    }
+}

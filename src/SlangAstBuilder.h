@@ -38,4 +38,6 @@ public:
 
     virtual antlrcpp::Any visitNotFactor(SlangParser::NotFactorContext *ctx) override;
 
+    virtual antlrcpp::Any visitCallExpression(SlangParser::CallExpressionContext *ctx) override;
+
 };

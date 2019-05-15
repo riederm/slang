@@ -85,6 +85,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitCallExpression(SlangParser::CallExpressionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitParameterList(SlangParser::ParameterListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitUnsignedInteger(SlangParser::UnsignedIntegerContext *ctx) override {
     return visitChildren(ctx);
   }

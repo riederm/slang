@@ -84,7 +84,7 @@ ADD_EXECUTABLE(runUnitTests
   ${ALL_SRC}
   )
 
-target_link_libraries(runUnitTests antlr4_static gtest_main)
+target_link_libraries(runUnitTests antlr4_static gtest_main ${llvm_libs})
 
 # main executable
 add_executable(main
@@ -92,6 +92,6 @@ add_executable(main
   ${ALL_SRC}
 )
 
-target_link_libraries(main antlr4_static)
+target_link_libraries(main antlr4_static ${llvm_libs})
 
 #include(GTest)

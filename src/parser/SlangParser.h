@@ -15,9 +15,9 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, WS = 19, TRUE = 20, 
-    FALSE = 21, IDENTIFIER = 22, NUM_INT = 23, EQUAL = 24, NOT_EQUAL = 25, 
-    LT = 26, LE = 27, GE = 28, GT = 29, SEMI = 30
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
+    T__20 = 21, WS = 22, TRUE = 23, FALSE = 24, IDENTIFIER = 25, NUM_INT = 26, 
+    EQUAL = 27, NOT_EQUAL = 28, LT = 29, LE = 30, GE = 31, GT = 32, SEMI = 33
   };
 
   enum {
@@ -25,9 +25,9 @@ public:
     RuleVariableDeclaration = 4, RuleVariableDefinition = 5, RuleTypeRef = 6, 
     RuleScalarTypeRef = 7, RuleBlock = 8, RuleStatement = 9, RuleStructuredStatement = 10, 
     RuleExpression = 11, RuleSimpleExpression = 12, RuleTerm = 13, RuleSignedFactor = 14, 
-    RuleFactor = 15, RuleNotFactor = 16, RuleUnsignedInteger = 17, RuleBoolLiteral = 18, 
-    RuleRelationaloperator = 19, RuleSimpleStatement = 20, RuleAssignmentStatement = 21, 
-    RuleReference = 22
+    RuleFactor = 15, RuleNotFactor = 16, RuleCallExpression = 17, RuleParameterList = 18, 
+    RuleUnsignedInteger = 19, RuleBoolLiteral = 20, RuleRelationaloperator = 21, 
+    RuleSimpleStatement = 22, RuleAssignmentStatement = 23, RuleReference = 24
   };
 
   SlangParser(antlr4::TokenStream *input);
@@ -57,6 +57,8 @@ public:
   class SignedFactorContext;
   class FactorContext;
   class NotFactorContext;
+  class CallExpressionContext;
+  class ParameterListContext;
   class UnsignedIntegerContext;
   class BoolLiteralContext;
   class RelationaloperatorContext;
@@ -299,7 +301,7 @@ public:
     NotFactorContext *notFactor();
     BoolLiteralContext *boolLiteral();
     UnsignedIntegerContext *unsignedInteger();
-    ReferenceContext *reference();
+    CallExpressionContext *callExpression();
 
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -321,6 +323,38 @@ public:
   };
 
   NotFactorContext* notFactor();
+
+  class  CallExpressionContext : public antlr4::ParserRuleContext {
+  public:
+    SlangParser::ReferenceContext *op = nullptr;;
+    SlangParser::ParameterListContext *parameters = nullptr;;
+    CallExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ReferenceContext *reference();
+    ParameterListContext *parameterList();
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  CallExpressionContext* callExpression();
+
+  class  ParameterListContext : public antlr4::ParserRuleContext {
+  public:
+    SlangParser::ExpressionContext *expressionContext = nullptr;;
+    std::vector<ExpressionContext *> expressions;;
+    ParameterListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<ExpressionContext *> expression();
+    ExpressionContext* expression(size_t i);
+
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ParameterListContext* parameterList();
 
   class  UnsignedIntegerContext : public antlr4::ParserRuleContext {
   public:

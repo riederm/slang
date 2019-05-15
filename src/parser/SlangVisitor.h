@@ -54,6 +54,10 @@ public:
 
     virtual antlrcpp::Any visitNotFactor(SlangParser::NotFactorContext *context) = 0;
 
+    virtual antlrcpp::Any visitCallExpression(SlangParser::CallExpressionContext *context) = 0;
+
+    virtual antlrcpp::Any visitParameterList(SlangParser::ParameterListContext *context) = 0;
+
     virtual antlrcpp::Any visitUnsignedInteger(SlangParser::UnsignedIntegerContext *context) = 0;
 
     virtual antlrcpp::Any visitBoolLiteral(SlangParser::BoolLiteralContext *context) = 0;

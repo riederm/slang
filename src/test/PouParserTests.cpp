@@ -7,6 +7,7 @@
 #include "../ast/constants.h"
 #include "../ast/parseResult.h"
 #include <algorithm>
+#include "../ast/astPrinter.h"
 
 
 using namespace std;
@@ -268,4 +269,34 @@ TEST(PouParserTests, simpleAssignmentsWithLogicExpressionWorks){
     auto right = static_cast<BoolConstant*>(logicExpression->right.get());
     ASSERT_NE(nullptr, right);
     ASSERT_EQ(right->value, true);
+
+    auto printer = std::make_unique<AstPrinter>();
+    parseResult->pou->visit(*printer);
+}
+
+TEST(PouParserTests, callStatementsCanBeParsed){
+    //GIVEN an assignment with an addition
+    string program =
+        "PROGRAM MyPRG              "
+        "   foo();                  "
+        "   phoo();               "
+        "   baz();"
+        "END_PROGRAM                ";
+
+    //WHEN I parse the program
+    unique_ptr<ParseResult> parseResult = StringParser::parse_from_string(program);
+
+    //THEN I assume no error
+    ASSERT_EQ(0, parseResult->syntaxErrors->size());
+
+    {
+        auto call = static_cast<CallStatement*>(parseResult->pou->body->expressions.at(0).get());
+        ASSERT_NE(nullptr, call);
+        ASSERT_EQ("foo", call->op->identifier);
+    }
+    {
+        auto call = static_cast<CallStatement*>(parseResult->pou->body->expressions.at(1).get());
+        ASSERT_NE(nullptr, call);
+        ASSERT_EQ("phoo", call->op->identifier);
+    }
 }

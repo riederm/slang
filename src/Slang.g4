@@ -53,10 +53,16 @@ factor:
    | notFactor
    | boolLiteral
    | unsignedInteger
-   | reference;
+   | callExpression;
 
 notFactor:
    'NOT' op=factor;
+
+callExpression:
+   op=reference  ('(' parameters=parameterList? ')')?;
+
+parameterList:
+   expressions+= expression (',' expressions+=expression)*;
 
 unsignedInteger: 
    value=NUM_INT;
@@ -77,7 +83,7 @@ simpleStatement :
    assignmentStatement SEMI;
 
 assignmentStatement:
-   left=expression ':=' right=expression;
+   left=expression (':=' right=expression)?;
 
 reference:
    IDENTIFIER;
